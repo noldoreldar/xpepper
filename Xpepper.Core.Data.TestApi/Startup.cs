@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Xpepper.Core.Data.EF;
 using Xpepper.Core.Data.EF.SqlServer;
+using Xpepper.Core.Data.MongoDb;
 
 namespace Xpepper.Core.Data.TestApi
 {
@@ -23,11 +24,11 @@ namespace Xpepper.Core.Data.TestApi
             services.AddControllers();
             services.AddSingleton(provider => Configuration);
 
-            var dbConfig = Configuration.GetSection("SqlDbConfiguration").Get<DbConfiguration>();
-            services.AddUnitOfWork<SqlDbUnitOfWork<TestContext>, DbConfiguration>(dbConfig);
+            //var dbConfig = Configuration.GetSection("SqlDbConfiguration").Get<DbConfiguration>();
+            //services.AddUnitOfWork<SqlDbUnitOfWork<TestContext>, DbConfiguration>(dbConfig);
 
-            //var dbConfig = Configuration.GetSection("MongoDbConfiguration").Get<MongoDbConfiguration>();
-            //services.AddUnitOfWork<MongoDbUnitOfWork, MongoDbConfiguration>(dbConfig);
+            var dbConfig = Configuration.GetSection("MongoDbConfiguration").Get<MongoDbConfiguration>();
+            services.AddUnitOfWork<MongoDbUnitOfWork, MongoDbConfiguration>(dbConfig);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
