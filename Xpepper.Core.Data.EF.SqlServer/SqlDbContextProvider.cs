@@ -6,14 +6,16 @@ namespace Xpepper.Core.Data.EF.SqlServer
     public sealed class SqlDbContextProvider<TContext> : IDbContextSourceProvider<TContext>
         where TContext : SqlDbContextBase
     {
+        private TContext _context;
+
         public TContext GetContext(DbConfiguration configuration)
         {
-            var dbContext = Activator.CreateInstance(typeof(TContext), BindingFlags.Default, null, new object[] { configuration }, null, null) as TContext;
+            _context ??= Activator.CreateInstance(typeof(TContext), BindingFlags.Default, null, new object[] { configuration }, null, null) as TContext;
             if (configuration.EnsureDatabaseCreated)
             {
-                dbContext?.Database.EnsureCreated();
+                _context?.Database.EnsureCreated();
             }
-            return dbContext;
+            return _context;
         }
     }
 }
