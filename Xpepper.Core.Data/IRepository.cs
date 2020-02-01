@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Xpepper.Core.Data.Entity;
 
-namespace Xpepper.Core.Data.Repository
+namespace Xpepper.Core.Data
 {
     public interface IRepository : IQueryable
     {
-
+       
     }
 
-    public interface IRepository<TEntity> : IRepository, IQueryable<TEntity> where TEntity : IEntity
+    public interface IRepository<TEntity> : IRepository, IQueryable<TEntity>
+        where TEntity : class, IEntity
     {
         TEntity Insert(TEntity entity);
 

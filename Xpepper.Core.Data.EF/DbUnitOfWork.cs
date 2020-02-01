@@ -1,37 +1,38 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Xpepper.Core.Data.Entity;
-using Xpepper.Core.Data.Repository;
-using Xpepper.Core.Data.UnitOfWork;
 
 namespace Xpepper.Core.Data.EF
 {
-    public abstract class DbUnitOfWorkBase<TContext, TContextSourceProvider> : UnitOfWorkBase<TContext, TContextSourceProvider, DbConfiguration>
+    public class DbUnitOfWork<TContext> : UnitOfWorkBase<TContext, DbContextFactory<TContext>, DbContextConfiguration>
         where TContext : DbContextBase
-        where TContextSourceProvider : class, IDbContextSourceProvider<TContext>, new()
     {
-        protected bool IsDisposed;
-
-        protected readonly DbConfiguration DbDataConfiguration;
-
-        protected DbUnitOfWorkBase(DbConfiguration configuration) : base(configuration)
+        public DbUnitOfWork(DbContextConfiguration configuration) : base(configuration)
         {
-            DbDataConfiguration = configuration;
+            _dbDataConfiguration = configuration;
+            DataContextFactory = new DbContextFactory<TContext>(_dbDataConfiguration);
         }
 
-        public override Task SaveChangesAsync()
+        private bool _isDisposed;
+
+        private readonly DbContextConfiguration _dbDataConfiguration;
+
+        public override DbContextFactory<TContext> DataContextFactory { get; }
+        protected override IRepositoryFactory<TEntity> CreateRepositoryFactory<TEntity>()
         {
-            return ContextSource.SaveChangesAsync();
+            return new DbRepositoryFactory<TEntity, TContext>(DataContextFactory);
         }
 
-        public override IRepository<TEntity> GetRepository<TEntity>()
+        public void SaveChanges()
         {
-            var dbSet = ContextSource.Set<TEntity>();
-            return CreateOrGetRepositoryFromDbSet(dbSet);
+            SaveChangesAsync().GetAwaiter().GetResult();
         }
 
-        protected abstract IRepository<TEntity> CreateOrGetRepositoryFromDbSet<TEntity>(DbSet<TEntity> dbSet) where TEntity : class, IEntity;
+        public Task SaveChangesAsync()
+        {
+            return GetContext().SaveChangesAsync();
+        }
 
         // Public implementation of Dispose pattern callable by consumers.
         public void Dispose()
@@ -43,19 +44,19 @@ namespace Xpepper.Core.Data.EF
         // Protected implementation of Dispose pattern.
         protected virtual void Dispose(bool disposing)
         {
-            if (IsDisposed)
+            if (_isDisposed)
                 return;
 
             if (disposing)
             {
-                ContextSource.Dispose();
+                GetContext().Dispose();
             }
             // Free any unmanaged objects here.
             //
-            IsDisposed = true;
+            _isDisposed = true;
         }
 
-        ~DbUnitOfWorkBase()
+        ~DbUnitOfWork()
         {
             Dispose(false);
         }
@@ -71,13 +72,12 @@ namespace Xpepper.Core.Data.EF
         {
             try
             {
-                return ContextSource.DisposeAsync();
+                return GetContext().DisposeAsync();
             }
             catch (Exception exc)
             {
                 return new ValueTask(Task.FromException(exc));
             }
         }
-
     }
 }

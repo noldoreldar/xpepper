@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using Xpepper.Core.Data.Repository;
-using Xpepper.Core.Data.UnitOfWork;
 
 namespace Xpepper.Core.Data.MongoDb
 {
-    public sealed class MongoDbUnitOfWork : UnitOfWorkBase<MongoDbContextClient, MongoDbContextProvider, MongoDbConfiguration>, IDisposable, IAsyncDisposable
+    public sealed class MongoDbUnitOfWork : UnitOfWorkBase<MongoDbContextClient, MongoDbContextFactory, MongoDbConfiguration>, IDisposable, IAsyncDisposable
     {
         private bool _isDisposed;
         
@@ -14,18 +12,15 @@ namespace Xpepper.Core.Data.MongoDb
 
         public MongoDbUnitOfWork(MongoDbConfiguration configuration) : base(configuration)
         {
-            _mongoDbDatabase = ContextSource.GetDatabase(configuration.DatabaseName);
+            DataContextFactory = new MongoDbContextFactory(configuration);
+            _mongoDbDatabase = GetContext().GetDatabase(configuration.DatabaseName);
         }
+        
+        public override MongoDbContextFactory DataContextFactory { get; }
 
-        public override Task SaveChangesAsync()
+        protected override IRepositoryFactory<TEntity> CreateRepositoryFactory<TEntity>()
         {
-            return Task.FromResult(0);
-        }
-
-        public override IRepository<TEntity> GetRepository<TEntity>()
-        {
-            var collection = _mongoDbDatabase.GetCollection<TEntity>(typeof(TEntity).Name);
-            return new MongoDbRepository<TEntity>(collection);
+            return new MongoRepositoryFactory<TEntity>(DataContextFactory);
         }
 
         // Public implementation of Dispose pattern callable by consumers.

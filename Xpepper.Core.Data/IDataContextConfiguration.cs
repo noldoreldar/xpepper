@@ -1,6 +1,6 @@
 ﻿namespace Xpepper.Core.Data
 { 
-    public interface IDataConfiguration
+    public interface IDataContextConfiguration
     {
     }
 }

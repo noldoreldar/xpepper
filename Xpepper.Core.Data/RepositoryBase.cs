@@ -3,35 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Xpepper.Core.Data.Entity;
 
-namespace Xpepper.Core.Data.Repository
+namespace Xpepper.Core.Data
 {
     public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
         where TEntity : class, IEntity
     {
-        protected readonly IQueryable<TEntity> BaseQueryable;
-        protected RepositoryBase(IQueryable<TEntity> baseQueryable)
-        {
-            BaseQueryable = baseQueryable;
-        }
+        protected IQueryable<TEntity> BaseQueryable { get; set; }
 
-        IEnumerator<TEntity> IEnumerable<TEntity>.GetEnumerator() 
-        {
-            return BaseQueryable.GetEnumerator();
-        }
+        public Type ElementType => BaseQueryable.ElementType;
+        public Expression Expression => BaseQueryable.Expression;
+        public IQueryProvider Provider => BaseQueryable.Provider;
 
         public IEnumerator GetEnumerator()
         {
             return BaseQueryable.GetEnumerator();
         }
+                
+        protected RepositoryBase(IQueryable<TEntity> baseEntityQueryable)
+        {
+            BaseQueryable = baseEntityQueryable;
+        }
 
-        public Type ElementType => BaseQueryable.ElementType;
-        public Expression Expression => BaseQueryable.Expression;
-        public IQueryProvider Provider => BaseQueryable.Provider;
+        IEnumerator<TEntity> IEnumerable<TEntity>.GetEnumerator()
+        {
+            return BaseQueryable.GetEnumerator();
+        }
+
         public TEntity Insert(TEntity entity)
         {
-           return InsertEntity(entity);
+            return InsertEntity(entity);
         }
 
         public void InsertRange(IEnumerable<TEntity> entities)

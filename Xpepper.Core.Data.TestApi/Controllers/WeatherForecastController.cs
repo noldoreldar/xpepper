@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Xpepper.Core.Data.UnitOfWork;
+using Xpepper.Core.Data.EF;
 
 namespace Xpepper.Core.Data.TestApi.Controllers
 {
@@ -15,12 +15,12 @@ namespace Xpepper.Core.Data.TestApi.Controllers
 
       
         
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly DbUnitOfWork<TestContext> _unitOfWork;
 
         public WeatherForecastController(IUnitOfWork unitOfWork)
         {
             
-            _unitOfWork = unitOfWork;
+            _unitOfWork = (DbUnitOfWork<TestContext>)unitOfWork;
         }
 
         [HttpGet]
@@ -33,7 +33,6 @@ namespace Xpepper.Core.Data.TestApi.Controllers
             {
                 lastStackItems = repo.Where(x => LastStackItemsGuidList.Contains(x.Id)).ToArray();
             }
-
             var newItems = Enumerable.Range(0, 500).Select(x => new TestEntity() { Name = Guid.NewGuid().ToString(), CreatedBy = Guid.NewGuid(), CreatedOn = DateTime.Now }).ToArray();
             repo.InsertRange(newItems);
             _unitOfWork.SaveChanges();

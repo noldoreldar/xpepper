@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using MongoDB.Driver;
-using Xpepper.Core.Data.Entity;
-using Xpepper.Core.Data.Repository;
 
 namespace Xpepper.Core.Data.MongoDb
 {

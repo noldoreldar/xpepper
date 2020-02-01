@@ -12,7 +12,7 @@ namespace Xpepper.Core.Data.TestApi
 
     public class TestContext : SqlDbContextBase
     {
-        public TestContext(DbConfiguration configuration) : base(configuration)
+        public TestContext(DbContextConfiguration configuration) : base(configuration)
         {
 
         }

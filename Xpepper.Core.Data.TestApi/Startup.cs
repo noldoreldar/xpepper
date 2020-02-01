@@ -24,11 +24,11 @@ namespace Xpepper.Core.Data.TestApi
             services.AddControllers();
             services.AddSingleton(provider => Configuration);
 
-            //var dbConfig = Configuration.GetSection("SqlDbConfiguration").Get<DbConfiguration>();
-            //services.AddUnitOfWork<SqlDbUnitOfWork<TestContext>, DbConfiguration>(dbConfig);
+            var dbConfig = Configuration.GetSection("SqlDbConfiguration").Get<DbContextConfiguration>();
+            services.AddUnitOfWork<DbUnitOfWork<TestContext>, DbContextConfiguration>(dbConfig);
 
-            var dbConfig = Configuration.GetSection("MongoDbConfiguration").Get<MongoDbConfiguration>();
-            services.AddUnitOfWork<MongoDbUnitOfWork, MongoDbConfiguration>(dbConfig);
+            //var dbConfig = Configuration.GetSection("MongoDbConfiguration").Get<MongoDbConfiguration>();
+            //services.AddUnitOfWork<MongoDbUnitOfWork, MongoDbConfiguration>(dbConfig);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
