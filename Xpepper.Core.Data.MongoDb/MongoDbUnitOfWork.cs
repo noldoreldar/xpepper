@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace Xpepper.Core.Data.MongoDb
 {
-    public sealed class MongoDbUnitOfWork : UnitOfWorkBase<MongoDbContextClient, MongoDbContextFactory, MongoDbConfiguration>, IDisposable, IAsyncDisposable
+    public class MongoDbUnitOfWork : UnitOfWorkBase<MongoDbContextClient, MongoDbContextFactory, MongoDbConfiguration>, IDisposable, IAsyncDisposable
     {
         private bool _isDisposed;
         

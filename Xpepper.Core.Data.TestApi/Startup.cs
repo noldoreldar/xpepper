@@ -25,7 +25,7 @@ namespace Xpepper.Core.Data.TestApi
             services.AddSingleton(provider => Configuration);
 
             var dbConfig = Configuration.GetSection("SqlDbConfiguration").Get<DbContextConfiguration>();
-            services.AddUnitOfWork<DbUnitOfWork<TestContext>, DbContextConfiguration>(dbConfig);
+            services.AddSqlDbUnitOfWork<TestContext, DbUnitOfWork<TestContext>, DbUnitOfWork<TestContext>>(dbConfig);
 
             //var dbConfig = Configuration.GetSection("MongoDbConfiguration").Get<MongoDbConfiguration>();
             //services.AddUnitOfWork<MongoDbUnitOfWork, MongoDbConfiguration>(dbConfig);

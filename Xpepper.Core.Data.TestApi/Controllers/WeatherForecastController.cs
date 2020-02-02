@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Xpepper.Core.Data.EF;
+using Xpepper.Core.Data.MongoDb;
 
 namespace Xpepper.Core.Data.TestApi.Controllers
 {
@@ -17,10 +18,9 @@ namespace Xpepper.Core.Data.TestApi.Controllers
         
         private readonly DbUnitOfWork<TestContext> _unitOfWork;
 
-        public WeatherForecastController(IUnitOfWork unitOfWork)
+        public WeatherForecastController(DbUnitOfWork<TestContext> unitOfWork)
         {
-            
-            _unitOfWork = (DbUnitOfWork<TestContext>)unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]

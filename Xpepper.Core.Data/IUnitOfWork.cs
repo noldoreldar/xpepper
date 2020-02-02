@@ -10,7 +10,7 @@ namespace Xpepper.Core.Data
 
         IRepositoryFactory<TEntity> GetRepositoryFactory<TEntity>() where TEntity : class, IEntity;
     }
-
+   
     public interface IUnitOfWork<TContext, out TDataContextFactory, out TDataContextConfiguration> : IUnitOfWork
         where TContext : class
         where TDataContextFactory : IDataContextFactory<TContext, TDataContextConfiguration>
